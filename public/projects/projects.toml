@@ -1,0 +1,16 @@
+
+layout = "card"
+
+[[item]]
+title = "wipe.sh"
+subtitle = "Android Storage Stress Test"
+content = "A Bash script using ADB to stress-test Android device storage."
+link = "https://github.com/0xnafq/wipe.sh"
+tags = ["Bash", "ADB", "Android"]
+
+[[item]]
+title = "More projects soon"
+subtitle = "Currently tinkering"
+content = "More experiments and projects coming soon."
+badge = "WIP"
+tags = ["Linux", "Experiments"]

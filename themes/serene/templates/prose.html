@@ -1,0 +1,90 @@
+{% extends "_base.html" %}
+
+{% block page %}prose-page{% endblock page %}
+{% block lang -%}
+{%- if section.extra.lang %}{{section.extra.lang}}{% else %}{{section.lang}}{% endif -%}
+{%- endblock lang %}
+{% block title %}{{ section.title }}{% endblock title %}
+{% block desc %}
+  {% if section.description %}
+    {% set desc = section.description %}
+  {% else %}
+    {% set desc = config.description %}
+  {% endif %}
+  {%- if section.extra.lang %}{% set og_lang = section.extra.lang %}{% else %}{% set og_lang = section.lang %}{% endif -%}
+  {{ <seo config
+      title={section.title}
+      desc={desc}
+      url={section.permalink}
+      lang={og_lang} /> }}
+{% endblock desc %}
+
+{% block head %}
+{% if config.markdown.highlighting.style == "class" %}
+<link id="hl" rel="stylesheet" type="text/css" href="/giallo-{% if color_scheme == "dark" %}dark{% else %}light{% endif %}.css" />
+{% endif %}
+{% set enable_math = section.extra.math if section.extra.math is defined else (config.extra.math if config.extra.math is defined else false) %}
+{% if enable_math %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/katex.min.css" integrity="sha384-M59ezskvvpvT+a+C1x088YJ3DVmK+wZdX0UkVKalOI4Qi5Nwv0WrvpqHcfa2HQqB" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/katex.min.js" integrity="sha384-7jGyG5zFwmEamqNWdCbpsPn+GTWEis3lnV7X/jXHyhFpJG7ExABLyMapabg8F4+p" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/contrib/auto-render.min.js" integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/contrib/copy-tex.min.js" integrity="sha384-Pe2JWbaShhSRT0SESJ9XLPeAsi4yrNi7r/CiH0Coq7giBjK5a6Ae7XcybE8rNlQP" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            throwOnError: false
+        });
+    });
+</script>
+{% endif %}
+{% endblock head %}
+
+{% block content %}
+<div id="wrapper">
+  <main>
+    {{ <back_link path={get_url(path="/")} config /> }}
+    {% include "_section_title.html" %}
+    <div>
+      {% set allow_copy = section.extra.code_copy if section.extra.code_copy is defined else (config.extra.code_copy if config.extra.code_copy is defined else false) %}
+      {% if allow_copy %}
+      {% set copy_icon = load_data(path="icon/copy.svg") %}
+      {% set check_icon = load_data(path="icon/check.svg") %}
+      <div id="copy-cfg" style="display: none;" data-copy-icon="{{ copy_icon }}" data-check-icon="{{ check_icon }}"></div>
+      {% endif %}
+      <article class="prose">
+        {{ section.content | safe }}
+      </article>
+
+      {% set show_reaction = section.extra.reaction if section.extra.reaction is defined else (config.extra.reaction if config.extra.reaction is defined else false) %}
+      {% if show_reaction %}
+      <div class="reaction {{ config.extra.reaction_align }}" data-endpoint="{{ config.extra.reaction_endpoint }}"></div>
+      {% endif %}
+
+      {% set show_comment = section.extra.comment if section.extra.comment is defined else (config.extra.comment if config.extra.comment is defined else false) %}
+      {% if show_comment %}
+      <div class="giscus"></div>
+      {% include "_giscus_script.html" %}
+      {% endif %}
+    </div>
+
+    {% include "_footer.html" %}
+  </main>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="/js/lightense.min.js"></script>
+{% set enable_mermaid = section.extra.mermaid if section.extra.mermaid is defined else (config.extra.mermaid if config.extra.mermaid is defined else false) %}
+{% if enable_mermaid %}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+{% endif %}
+{% endblock script %}

@@ -1,0 +1,9 @@
+.zed/
+.claude/
+
+public/
+content/
+static/img/
+static/assets/
+
+.DS_Store

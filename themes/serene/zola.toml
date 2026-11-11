@@ -1,0 +1,75 @@
+base_url = "https://serene-demo.pages.dev"
+title = "Serene"
+description = ""
+default_language = "en"
+# theme = "serene"
+output_dir = "public"
+compile_sass = true
+minify_html = false
+build_search_index = false
+generate_feeds = false
+feed_filenames = ["feed.xml"]
+taxonomies = [{ name = "tags" }, { name = "categories" }]
+
+[markdown]
+render_emoji = false
+external_links_target_blank = false
+external_links_no_follow = true
+external_links_no_referrer = true
+smart_punctuation = false
+github_alerts = true
+
+[markdown.highlighting]
+style = "class"
+light_theme = "github-light"
+dark_theme = "github-dark"
+
+[slugify]
+paths = "on"
+taxonomies = "on"
+anchors = "on"
+
+#=========================================================================================
+[extra]
+
+nav = [
+  { name = "posts", path = "/posts" },
+  { name = "collections", path = "/collections" },
+  { name = "about", path = "/about" },
+]
+
+name = "Serene"
+handle = "serene"
+bio = "A minimal blog theme for Zola, well crafted"
+# avatar = "img/avatar.webp"
+links = [
+  { name = "GitHub", icon = "github", url = "https://github.com/isunjn/serene" },
+  { name = "Email", icon = "email", url = "mailto:<your-email-address>" },
+]
+blog_section_path = "/posts"
+
+back_link_text = "Back"
+color_scheme = "auto" # "auto" | "light" | "dark"
+
+# og_image = "https://github.com/isunjn/serene/blob/main/screenshot.png?raw=true"
+
+footer_copyright = "© 2025 Serene Theme"
+footer_credits = true
+
+not_found_error_text = "404 Not Found"
+not_found_recover_text = "« back to home »"
+
+date_format = "%b %-d, %Y"
+toc = true
+code_copy = true
+comment = false
+math = false
+mermaid = false
+outdated_alert = false
+outdated_alert_days = 120
+outdated_alert_text_before = "This article was last updated "
+outdated_alert_text_after = " days ago and may be out of date."
+
+reaction = false
+reaction_align = "right"
+reaction_endpoint = "https://example.com/api/reaction"
