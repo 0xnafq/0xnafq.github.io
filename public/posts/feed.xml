@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+	<title>Posts</title>
+	<subtitle>My personal blog.</subtitle>
+	<link rel="self" type="application/atom+xml" href="https://0xnafq.github.io/posts/feed.xml"/>
+  <link rel="alternate" type="text/html" href="https://0xnafq.github.io/posts/"/>
+  
+	<updated>2026-11-12T00:00:00+00:00</updated>
+	
+	<id>https://0xnafq.github.io/posts/feed.xml</id>
+	<entry xml:lang="en">
+		<title>Proper Factory Reset</title>
+		<published>2026-11-12T00:00:00+00:00</published>
+		<updated>2026-11-12T00:00:00+00:00</updated>
+		<link rel="alternate" type="text/html" href="https://0xnafq.github.io/posts/factory-reset/"/>
+		<id>https://0xnafq.github.io/posts/factory-reset/</id>
+    
+		<content type="html" xml:base="https://0xnafq.github.io/posts/factory-reset/">&lt;p&gt;In this blog, I’ll walk you through how to properly wipe your Android phone before selling it or handing it off. So your data doesn’t go along for the ride with the phone too :p&lt;/p&gt;
+&lt;h1 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;a class=&quot;zola-anchor&quot; href=&quot;#prerequisites&quot; aria-label=&quot;Anchor link for: prerequisites&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;/a&gt;
+&lt;/h1&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;plain&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;A linux system with adb installed &lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;USB cable (which supports data transfer)&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Backup of your data (optional)&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;Have your phone charged above 50% atleast&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remove accounts &amp;amp; disable lock screen (preventing FRP)&lt;/p&gt;
+&lt;p&gt;Remove the google accounts and the OEM accounts. Disable the lock screen and set it to none.&lt;/p&gt;
+&lt;h1 id=&quot;check-encryption-state&quot;&gt;Check encryption state&lt;a class=&quot;zola-anchor&quot; href=&quot;#check-encryption-state&quot; aria-label=&quot;Anchor link for: check-encryption-state&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;/a&gt;
+&lt;/h1&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;adb&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; shell&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; getprop&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; ro.crypto.state&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;if the output says &lt;code&gt;encrypted&lt;/code&gt; = configured and ready&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;if the output says &lt;code&gt;unencrypted&lt;/code&gt; = try to enable it if available in settings&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;overwrite-then-wipe&quot;&gt;Overwrite, then wipe&lt;a class=&quot;zola-anchor&quot; href=&quot;#overwrite-then-wipe&quot; aria-label=&quot;Anchor link for: overwrite-then-wipe&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;/a&gt;
+&lt;/h1&gt;
+&lt;p&gt;We have to overwrite free space on the user partition by copying large
+files into &lt;code&gt;/sdcard&lt;/code&gt;, then delete them.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;random file set on linux&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;dd&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; if=/dev/urandom&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; of=~/bigfile.bin&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; bs=1M&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; count=&lt;/span&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; status=progress&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;now run this script until you fill the android&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;#!&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;/bin/bash&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;FILE&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;n&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;i&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;1&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt;echo&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; &amp;quot;&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;Pushing random files until device reports full...&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt; true&lt;/span&gt;&lt;span&gt;;&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt; do&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt;  echo&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; &amp;quot;&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;Pushing copy #&lt;/span&gt;&lt;span&gt;$&lt;/span&gt;&lt;span&gt;i&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;  if&lt;/span&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt; adb&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; push&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; &amp;quot;&lt;/span&gt;&lt;span&gt;$&lt;/span&gt;&lt;span&gt;FILE&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; /sdcard/bigfile_&lt;/span&gt;&lt;span&gt;$&lt;/span&gt;&lt;span&gt;{&lt;/span&gt;&lt;span&gt;i&lt;/span&gt;&lt;span&gt;}&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;.bin&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt; &amp;gt;&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;/dev/null&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt; 2&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;&amp;gt;&amp;amp;1&lt;/span&gt;&lt;span&gt;;&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt; then&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span&gt;    i&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;=&lt;/span&gt;&lt;span&gt;$(&lt;/span&gt;&lt;span&gt;(&lt;/span&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;i+1&lt;/span&gt;&lt;span&gt;)&lt;/span&gt;&lt;span&gt;)&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;  else&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt;    echo&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; &amp;quot;&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;Push failed — likely full. Stopping.&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;&amp;quot;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;    break&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;  fi&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;done&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h1 id=&quot;check-free-space&quot;&gt;Check free space&lt;a class=&quot;zola-anchor&quot; href=&quot;#check-free-space&quot; aria-label=&quot;Anchor link for: check-free-space&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;/a&gt;
+&lt;/h1&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;adb&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; shell&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; df&lt;/span&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt; -&lt;/span&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; /sdcard&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt; |&lt;/span&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt; true&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h1 id=&quot;purge&quot;&gt;Purge&lt;a class=&quot;zola-anchor&quot; href=&quot;#purge&quot; aria-label=&quot;Anchor link for: purge&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;/a&gt;
+&lt;/h1&gt;
+&lt;p&gt;remove the files we just pushed&lt;/p&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;adb&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; shell&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; rm&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; /sdcard/bigfile_&lt;/span&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;.bin&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;now reboot&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;adb&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; reboot&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;now just perform a normal factory reset how you normally would and you&#39;re all done.&lt;/p&gt;
+&lt;h1 id=&quot;automation&quot;&gt;Automation&lt;a class=&quot;zola-anchor&quot; href=&quot;#automation&quot; aria-label=&quot;Anchor link for: automation&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;/a&gt;
+&lt;/h1&gt;
+&lt;p&gt;I was bored so i made a script to automate this process, you can find the link &lt;a rel=&quot;nofollow noreferrer external&quot; href=&quot;https://github.com/0xnafq/Wipe-script&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;You have to enable &lt;code&gt;USB-Debugging&lt;/code&gt; in developer settings, then check if it&#39;s recognized in adb.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;adb&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; devices&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;output should be like&lt;/p&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span&gt; adb devices&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; of&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; devices&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; attached&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;df5bXXXX&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;        device&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and when the device is recognized, just run the script with &lt;code&gt;sudo&lt;/code&gt;(important)&lt;/p&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;sudo&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; ./wipe.sh&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and then the magic would happen&lt;/p&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span&gt; sudo ./wipe.sh&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;Checking&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; device...&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;df5bXXXX&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt;        device&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;941621248&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; bytes&lt;/span&gt;&lt;span&gt; (942&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; MB,&lt;/span&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt; 898&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; MiB&lt;/span&gt;&lt;span&gt;) copied, 2 s, 470 MB/s&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;1024+0&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; records&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; in&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;1024+0&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; records&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; out&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;1073741824&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; bytes&lt;/span&gt;&lt;span&gt; (1.1&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; GB,&lt;/span&gt;&lt;span class=&quot;z-l-1 z-d-4&quot;&gt; 1.0&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; GiB&lt;/span&gt;&lt;span&gt;) copied, 2.28577 s, 470 MB/s&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;Pushing&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; files&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; until&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; storage&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; full...&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;1&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;2&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;3&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;4&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;5&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;6&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;7&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;8&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;9&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;10&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;11&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;12&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;13&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;14&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;this might go on for a while and it would end like this.&lt;/p&gt;
+&lt;pre class=&quot;giallo z-l-code z-d-code&quot; &gt;&lt;code data-lang=&quot;shellscript&quot;&gt;&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;87&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;88&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;89&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;90&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;91&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;92&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;93&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;94&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;95&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;96&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;pushed&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;97&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;Stopped&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; at&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; copy&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt; #&lt;/span&gt;&lt;span class=&quot;z-l-5 z-d-3&quot;&gt;98&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;Deleting&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; pushed&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; files...&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;Empty&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; Files&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; app&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; Trash&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; manually&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; if&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; needed.&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-6 z-d-7&quot;&gt;Now&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; run&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; factory&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; reset&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; via&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; phone&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; UI&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; or&lt;/span&gt;&lt;span class=&quot;z-l-2 z-d-6&quot;&gt; recovery.&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;/span&gt;
+&lt;span class=&quot;giallo-l&quot;&gt;&lt;span class=&quot;z-l-8 z-d-10&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;so it pushes the 1gb file to the device till it fills up and then you can do the factory reset via ui as you normally do and you can repeat it if you want to.&lt;/p&gt;
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;a class=&quot;zola-anchor&quot; href=&quot;#conclusion&quot; aria-label=&quot;Anchor link for: conclusion&quot; style=&quot;visibility: hidden;&quot;&gt;&lt;/a&gt;
+&lt;/h1&gt;
+&lt;p&gt;A proper factory reset doesn&#39;t just delete data, it also ensures the data is overwritten first so the old data can&#39;t be recovered. Filling the device with random data, deleting it and then performing a standard reset, you significantly reduce the risk of data leakage. It just adds another layer of security before handing off your phone or selling it.&lt;/p&gt;
+</content>
+	</entry>
+</feed>
